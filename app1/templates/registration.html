@@ -227,6 +227,12 @@
                     <label for="name" class="form-label">Full Name</label>
                     <input type="text" class="form-control whiteColor" id="name" name="name" placeholder="Enter your full name" required>
                 </div>
+
+                <div class="mb-4" style="width: 100%;display: flex;flex-direction: column;">
+                    <label for="phone" class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control phone-input whiteColor" id="phone" name="phone_number" placeholder="Enter your mobile number" required style="width: 100%;">
+                    <input type="hidden" id="country_code" name="country_code" style="width: 100%;">
+                </div>
                 
                 <div class="mb-4">
                     <label class="form-label">I am registering as:</label>
@@ -248,11 +254,7 @@
                     </div>
                 </div>
                 
-                <div class="mb-4" style="width: 100%;display: flex;flex-direction: column;">
-                    <label for="phone" class="form-label">Mobile Number</label>
-                    <input type="tel" class="form-control phone-input whiteColor" id="phone" name="phone_number" placeholder="Enter your mobile number" required style="width: 100%;">
-                    <input type="hidden" id="country_code" name="country_code" style="width: 100%;">
-                </div>
+                
                 
                 <button type="submit" class="btn btn-primary btn-register">
                     <i class="fas fa-user-plus me-2"></i>Register Account
