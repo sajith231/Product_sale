@@ -73,3 +73,10 @@ def register_view(request):
             return redirect('register')
     
     return render(request, 'registration.html')
+
+
+
+
+
+def index(request):
+    return render(request, 'index.html')
