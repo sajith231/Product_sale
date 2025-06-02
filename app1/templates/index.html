@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Header Section</title>
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
    <style>
         * {
             margin: 0;
@@ -151,49 +149,7 @@
             color: #666;
         }
         
-        .search-bar {
-            flex-grow: 1;
-            margin: 0 20px;
-            position: relative;
-        }
         
-        .search-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-bar input {
-            width: 100%;
-            padding: 12px 50px 12px 20px;
-            border: 2px solid #002f34;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-        
-        .search-bar input:focus {
-            border-color: #23e5db;
-            box-shadow: 0 0 0 3px rgba(35, 229, 219, 0.1);
-        }
-        
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            background: #002f34;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .search-btn:hover {
-            background: #23e5db;
-            transform: scale(1.05);
-        }
         
         .header-actions {
             display: flex;
@@ -757,111 +713,12 @@
                 font-size: 16px;
             }
 
-            .categories {
-                padding: 8px 15px 15px;
-                gap: 4px;
-            }
-
-            .category-item {
-                padding: 6px 12px;
-                font-size: 11px;
-                letter-spacing: 0.3px;
-            }
+            
         }
     </style>
-</head>
-<body>
-    <div>
-        <div class="header" style="position: fixed;width: 100%;top: 0;left: 0;right: 0;z-index: 999;">
-            
-            
-            <div class="logo">Logo</div>
-            
-            <!-- Location Dropdown -->
-            <div class="location-dropdown" id="locationDropdown">
-                <div class="location-selector" onclick="toggleLocationDropdown()">
-                    <i class="fas fa-map-marker-alt location-icon"></i>
-                    <span class="location-text">India</span>
-                    <i class="fas fa-chevron-down dropdown-arrow"></i>
-                </div>
-                <div class="location-dropdown-menu">
-                    <div class="location-search">
-                        <input type="text" placeholder="Search location..." id="locationSearch">
-                    </div>
-                    <div class="location-option selected" onclick="selectLocation(this, 'India')">
-                        <i class="fas fa-map-marker-alt"></i>
-                        India
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Mumbai')">
-                        <i class="fas fa-building"></i>
-                        Mumbai
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Delhi')">
-                        <i class="fas fa-building"></i>
-                        Delhi
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Bangalore')">
-                        <i class="fas fa-building"></i>
-                        Bangalore
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Hyderabad')">
-                        <i class="fas fa-building"></i>
-                        Hyderabad
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Chennai')">
-                        <i class="fas fa-building"></i>
-                        Chennai
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Pune')">
-                        <i class="fas fa-building"></i>
-                        Pune
-                    </div>
-                    <div class="location-option" onclick="selectLocation(this, 'Kolkata')">
-                        <i class="fas fa-building"></i>
-                        Kolkata
-                    </div>
-                </div>
-            </div>
-            
-            <div class="search-bar">
-                <div class="search-container">
-                    <input type="text" placeholder='Search "Bikes"'>
-                    <button class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="header-actions">
-                <!-- <div class="language-selector">ENGLISH</div> -->
-                
-                <a href="#" class="login-btn">
-                    <i class="fas fa-user"></i>
-                </a>
-                
-                <!-- Enhanced Sell Button -->
-                <button class="sell-btn">
-                    <i class="fas fa-plus"></i>
-                    <span>SELL</span>
-                </button>
-            </div>
-        </div>
+
         
-        <div class="categories-wrapper" style="margin-top: 5%;">
-            
-            <div class="categories" id="categoriesContainer">
-                <div class="category-item active">ALL CATEGORIES</div>
-                <div class="category-item">Cars</div>
-                <div class="category-item">Motorcycles</div>
-                <div class="category-item">Mobile Phones</div>
-                <div class="category-item">For Sale: Houses & Apartments</div>
-                <div class="category-item">Scooters</div>
-                <div class="category-item">Commercial & Other Vehicles</div>
-                <div class="category-item">For Rent: Houses & Apartments</div>
-            </div>
-            
-            
-        </div>
+        
     </div>
     
     <!-- Improved Slider Section -->
@@ -1195,3 +1052,27 @@
         }
 
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburger = document.getElementById('hamburgerMenu');
+        const sideMenu = document.getElementById('sideMenu');
+        const closeSideMenuBtn = document.getElementById('closeSideMenuBtn');
+
+        function toggleSideMenu() {
+            sideMenu.classList.toggle('active');
+            hamburger.classList.toggle('open');
+        }
+
+        hamburger.addEventListener('click', toggleSideMenu);
+        closeSideMenuBtn.addEventListener('click', toggleSideMenu);
+
+        window.addEventListener('click', function(event) {
+            if (event.target !== hamburger && !sideMenu.contains(event.target)) {
+                sideMenu.classList.remove('active');
+                hamburger.classList.remove('open');
+            }
+        });
+    });
+</script>
+{% endblock %}
