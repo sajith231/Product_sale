@@ -295,99 +295,7 @@
             transform: rotate(90deg);
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .header {
-                padding: 12px 16px;
-            }
-
-            .location-dropdown {
-                width: 150px;
-            }
-
-            .location-trigger,
-            .location-dropdown-menu {
-                padding: 6px 10px;
-            }
-
-            .location-label,
-            .location-text {
-                font-size: 12px;
-            }
-
-            .location-search input {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
-
-            .location-option {
-                padding: 8px 10px;
-            }
-
-            .search-bar input {
-                padding: 8px 10px 8px 40px; /* Adjusted for mobile */
-                font-size: 14px;
-            }
-
-            .search-icon {
-                left: 14px; /* Adjusted for mobile */
-                font-size: 14px;
-            }
-
-
-            .notification-icon {
-                font-size: 20px;
-            }
-
-            .notification-badge {
-                font-size: 10px;
-            }
-
-            .login-btn i {
-                font-size: 18px;
-            }
-
-            .fixed-sell-btn {
-                bottom: 20px;
-                right: 20px;
-                padding: 14px 24px;
-                font-size: 15px;
-            }
-
-            .notification-wrapper {
-                margin-left: 230px;
-            }
-
-            .logo {
-                display: none;
-            }
-
-            .search-container {
-                width: 100%;
-            }
-        }
-
-        /* Optional pulse animation for attention */
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-            }
-
-            100% {
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            }
-        }
-
-        /* Add this class to enable pulse animation */
-        .fixed-sell-btn.pulse {
-            animation: pulse 2s infinite;
-        }
-
-
+        /* Hamburger menu styles */
         .hamburger {
             width: 30px;
             height: 22px;
@@ -395,6 +303,8 @@
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
+            position: relative;
+            z-index: 1002;
         }
 
         .hamburger span {
@@ -402,10 +312,10 @@
             height: 4px;
             background-color: #333;
             border-radius: 2px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
-        /* Optional: Animate the lines to form an X when open */
+        /* Transform hamburger to X when open */
         .hamburger.open span:nth-child(1) {
             transform: rotate(45deg) translate(5px, 5px);
         }
@@ -416,6 +326,122 @@
 
         .hamburger.open span:nth-child(3) {
             transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Side Menu Styles */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #002f34;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 1001;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+            background-color: #002f34;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .side-menu-content {
+            padding: 20px;
+        }
+
+        .side-menu-item {
+            display: block;
+            padding: 10px 0;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .side-menu-item:hover {
+            color: #007bff;
+        }
+
+        /* Categories styles */
+        .categories-wrapper {
+            margin-top: 5%;
+            padding: 0 10px;
+        }
+
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .categories::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .categories::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .categories::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .category-item {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: fit-content;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-item.active {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .category-item i {
+            font-size: 16px;
         }
 
         .categories-popup {
@@ -442,13 +468,6 @@
             padding: 10px;
             background-color: #f8f9fa;
             border-bottom: 1px solid #dee2e6;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
         }
 
         .popup-content {
@@ -489,64 +508,132 @@
             background-color: #e9ecef;
         }
 
-        /* Side Menu Styles */
-        /* Side Menu Styles */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background-color: #002f34;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease;
-            z-index: 1001;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .location-dropdown {
+                width: 150px;
+            }
+
+            .location-trigger,
+            .location-dropdown-menu {
+                padding: 6px 10px;
+            }
+
+            .location-label,
+            .location-text {
+                font-size: 12px;
+            }
+
+            .location-search input {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .location-option {
+                padding: 8px 10px;
+            }
+
+            .search-bar input {
+                padding: 8px 10px 8px 40px;
+                font-size: 14px;
+            }
+
+            .search-icon {
+                left: 14px;
+                font-size: 14px;
+            }
+
+            .notification-icon {
+                font-size: 20px;
+            }
+
+            .notification-badge {
+                font-size: 10px;
+            }
+
+            .login-btn i {
+                font-size: 18px;
+            }
+
+            .fixed-sell-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 14px 24px;
+                font-size: 15px;
+            }
+
+            .notification-wrapper {
+                margin-left: 220px;
+            }
+
+            .logo {
+                display: none;
+            }
+
+            .search-container {
+                width: 100%;
+            }
+
+            /* Make hamburger more visible on mobile */
+            .hamburger {
+                width: 32px;
+                height: 24px;
+                margin-right: 10px;
+            }
+
+            .hamburger span {
+                height: 3px;
+            }
+
+            /* Mobile categories adjustments */
+            .categories-wrapper {
+                padding: 0 5px;
+            }
+
+            .category-item {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .category-item i {
+                font-size: 14px;
+            }
+
+            /* Show scrollbar on mobile for better UX */
+            .categories::-webkit-scrollbar {
+                height: 4px;
+            }
         }
 
-        .side-menu.active {
-            left: 0;
+        /* Optional pulse animation for attention */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            }
+
+            100% {
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            }
         }
 
-        .side-menu-header {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
-            background-color: #002f34;
-            border-bottom: 1px solid #eee;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .side-menu-content {
-            padding: 20px;
-        }
-
-        .side-menu-item {
-            display: block;
-            padding: 10px 0;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-
-        }
-
-        .side-menu-item:hover {
-            color: #007bff;
+        .fixed-sell-btn.pulse {
+            animation: pulse 2s infinite;
         }
     </style>
-
 </head>
 
 <body>
     <!-- Header section -->
-    <!-- Header section -->
     <div class="header" style="position: fixed;width: 100%;top: 0;left: 0;right: 0;z-index: 999;">
-        <div class="hamburger" id="hamburgerMenu" onclick="toggleSideMenu()">
+        <div class="hamburger" id="hamburgerMenu">
             <span></span>
             <span></span>
             <span></span>
@@ -579,14 +666,12 @@
             </div>
         </div>
 
- <div class="search-bar">
-        <div class="search-container ">
-            <i class="fas fa-search search-icon "></i>
-            <input type="text" placeholder='What are you looking for?' class="pl-10">
+        <div class="search-bar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder='What are you looking for?' class="pl-10">
+            </div>
         </div>
-    </div>
-
-
 
         <div class="notification-wrapper">
             <i class="fas fa-bell notification-icon"></i>
@@ -603,8 +688,9 @@
     <!-- Side Menu -->
     <div id="sideMenu" class="side-menu">
         <div class="side-menu-header">
-            <button id="closeSideMenuBtn" class="close-btn" onclick="toggleSideMenu()"><i class="fas fa-times"
-                    style="color: white;"></i></button>
+            <button id="closeSideMenuBtn" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <div class="side-menu-content">
             <a href="#" class="side-menu-item">Home</a>
@@ -615,7 +701,9 @@
             <a href="#" class="side-menu-item">Logout</a>
         </div>
     </div>
-    <div class="categories-wrapper" style="margin-top: 5%;">
+
+    <!-- Categories Section -->
+    <div class="categories-wrapper">
         <div class="categories" id="categoriesContainer">
             <div class="category-item active">ALL CATEGORIES</div>
             <div class="category-item">
@@ -639,6 +727,10 @@
                 Commercial & Other Vehicles
             </div>
             <div class="category-item">
+                <i class="fas fa-truck"></i>
+                Commercial & Other Vehicles
+            </div>
+            <div class="category-item">
                 <i class="fas fa-building"></i>
                 For Rent: Houses & Apartments
             </div>
@@ -651,12 +743,13 @@
         <span>Sell</span>
     </button>
 
-
     <!-- Categories Popup -->
     <div id="categoriesPopup" class="categories-popup">
         <div class="popup-header">
-            <button id="closePopupBtn" class="close-btn"><i class="fas fa-times"></i></button>
             <h3>Categories</h3>
+            <button id="closePopupBtn" class="close-btn">
+                <i class="fas fa-times" style="color: black;"></i>
+            </button>
         </div>
         <div class="popup-content">
             <div class="category-section">
@@ -727,34 +820,105 @@
                     <li>Hotel & Travel Executive</li>
                 </ul>
             </div>
-
         </div>
     </div>
 
-
     {% block content %}{% endblock %}
-</body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const categoriesButton = document.querySelector('.category-item.active');
-        const categoriesPopup = document.getElementById('categoriesPopup');
-        const closePopupBtn = document.getElementById('closePopupBtn');
 
-        categoriesButton.addEventListener('click', function () {
-            categoriesPopup.style.display = 'block';
-        });
+    <script>
+        // Location dropdown functionality
+        function toggleLocationDropdown() {
+            const dropdown = document.getElementById('locationDropdown');
+            dropdown.classList.toggle('active');
+        }
 
-        closePopupBtn.addEventListener('click', function () {
-            categoriesPopup.style.display = 'none';
-        });
+        function selectLocation(element, location) {
+            // Update the displayed location
+            const locationText = document.querySelector('.location-text');
+            locationText.textContent = location;
 
-        window.addEventListener('click', function (event) {
-            if (event.target === categoriesPopup) {
-                categoriesPopup.style.display = 'none';
+            // Update selected state
+            document.querySelectorAll('.location-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+
+            // Close dropdown
+            document.getElementById('locationDropdown').classList.remove('active');
+        }
+
+        // Categories popup functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoriesButton = document.querySelector('.category-item.active');
+            const categoriesPopup = document.getElementById('categoriesPopup');
+            const closePopupBtn = document.getElementById('closePopupBtn');
+
+            if (categoriesButton) {
+                categoriesButton.addEventListener('click', function () {
+                    categoriesPopup.style.display = 'block';
+                });
             }
+
+            if (closePopupBtn) {
+                closePopupBtn.addEventListener('click', function () {
+                    categoriesPopup.style.display = 'none';
+                });
+            }
+
+            // Close popup when clicking outside
+            window.addEventListener('click', function (event) {
+                if (event.target === categoriesPopup) {
+                    categoriesPopup.style.display = 'none';
+                }
+            });
         });
-    });
 
-</script>
+        // Hamburger menu functionality - FIXED VERSION
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburgerMenu');
+            const sideMenu = document.getElementById('sideMenu');
+            const closeSideMenuBtn = document.getElementById('closeSideMenuBtn');
 
+            function toggleSideMenu() {
+                sideMenu.classList.toggle('active');
+                hamburger.classList.toggle('open');
+            }
+
+            // Add event listeners
+            if (hamburger) {
+                hamburger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSideMenu();
+                });
+            }
+
+            if (closeSideMenuBtn) {
+                closeSideMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSideMenu();
+                });
+            }
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!hamburger.contains(event.target) && 
+                    !sideMenu.contains(event.target) && 
+                    sideMenu.classList.contains('active')) {
+                    sideMenu.classList.remove('active');
+                    hamburger.classList.remove('open');
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('locationDropdown');
+                if (!dropdown.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
 </html>

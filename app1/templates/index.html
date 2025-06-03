@@ -224,16 +224,7 @@
             font-size: 16px;
         }
         
-        /* Mobile hamburger menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #002f34;
-            cursor: pointer;
-            padding: 8px;
-        }
+        
         
         /* Enhanced Professional Categories Section */
         .categories-wrapper {
@@ -1053,26 +1044,5 @@
 
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const hamburger = document.getElementById('hamburgerMenu');
-        const sideMenu = document.getElementById('sideMenu');
-        const closeSideMenuBtn = document.getElementById('closeSideMenuBtn');
 
-        function toggleSideMenu() {
-            sideMenu.classList.toggle('active');
-            hamburger.classList.toggle('open');
-        }
-
-        hamburger.addEventListener('click', toggleSideMenu);
-        closeSideMenuBtn.addEventListener('click', toggleSideMenu);
-
-        window.addEventListener('click', function(event) {
-            if (event.target !== hamburger && !sideMenu.contains(event.target)) {
-                sideMenu.classList.remove('active');
-                hamburger.classList.remove('open');
-            }
-        });
-    });
-</script>
 {% endblock %}
