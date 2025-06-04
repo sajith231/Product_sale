@@ -296,86 +296,108 @@
         }
 
         /* Hamburger menu styles */
-        .hamburger {
-            width: 30px;
-            height: 22px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            position: relative;
-            z-index: 1002;
-        }
+        /* Hamburger menu */
+.hamburger {
+    width: 30px;
+    height: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1002;
+}
 
-        .hamburger span {
-            display: block;
-            height: 4px;
-            background-color: #333;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
+.hamburger span {
+    display: block;
+    height: 3px;
+    background-color: #333;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
 
-        /* Transform hamburger to X when open */
-        .hamburger.open span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
+.hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
 
-        .hamburger.open span:nth-child(2) {
-            opacity: 0;
-        }
+/* Side Menu Styles */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    transition: left 0.3s ease;
+    z-index: 1001;
+}
 
-        .hamburger.open span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
+.side-menu.active {
+    left: 0;
+}
 
-        /* Side Menu Styles */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background-color: #002f34;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease;
-            z-index: 1001;
-        }
+.side-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
 
-        .side-menu.active {
-            left: 0;
-        }
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+}
 
-        .side-menu-header {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
-            background-color: #002f34;
-            border-bottom: 1px solid #eee;
-        }
+/* Side Menu Content */
+.side-menu-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: white;
-        }
+.side-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    gap: 12px;
+}
 
-        .side-menu-content {
-            padding: 20px;
-        }
+.side-menu-item:hover {
+    background-color: #f0f0f0;
+    color: #007bff;
+}
 
-        .side-menu-item {
-            display: block;
-            padding: 10px 0;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-        }
+.side-menu-item i {
+    width: 20px;
+    text-align: center;
+}
 
-        .side-menu-item:hover {
-            color: #007bff;
-        }
+/* Responsive */
+@media (max-width: 768px) {
+    .side-menu {
+        width: 80%;
+        max-width: 240px;
+    }
+}
+
 
         /* Categories styles */
         .categories-wrapper {
@@ -693,20 +715,20 @@
 
     <!-- Side Menu -->
     <div id="sideMenu" class="side-menu">
-        <div class="side-menu-header">
-            <button id="closeSideMenuBtn" class="close-btn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="side-menu-content">
-            <a href="#" class="side-menu-item">Home</a>
-            <a href="#" class="side-menu-item">Wishlist</a>
-            <a href="#" class="side-menu-item">Cart</a>
-            <a href="#" class="side-menu-item">Profile</a>
-            <a href="#" class="side-menu-item">Settings</a>
-            <a href="#" class="side-menu-item">Logout</a>
-        </div>
+    <div class="side-menu-header">
+        <button id="closeSideMenuBtn" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
+    <div class="side-menu-content">
+        <a href="#" class="side-menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="#" class="side-menu-item"><i class="fas fa-heart"></i><span>Wishlist</span></a>
+        <a href="#" class="side-menu-item"><i class="fas fa-shopping-cart"></i><span>Cart</span></a>
+        <a href="#" class="side-menu-item"><i class="fas fa-user"></i><span>Profile</span></a>
+        <a href="#" class="side-menu-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        <a href="#" class="side-menu-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </div>
+</div>
 
     <!-- Categories Section -->
     <div class="categories-wrapper">
