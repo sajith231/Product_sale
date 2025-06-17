@@ -385,10 +385,10 @@
 
 <div class="wishlist-container">
     <!-- Header Section -->
-    <div class="wishlist-header">
+    <!-- <div class="wishlist-header">
         <h1>My Wishlist</h1>
 
-    </div>
+    </div> -->
 
 
     <!-- Wishlist Grid -->
@@ -416,10 +416,11 @@
                 <div class="wishlist-actions">
                     <button class="btn btn-primary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H6L2 22V6C2 4.9 2.9 4 4 4ZM4 6V17.17L5.17 16H20V6H4Z"/>
                         </svg>
                         Contact Seller
                     </button>
+
                     <button class="btn btn-secondary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 7H16V6C16 3.24 13.76 1 11 1S6 3.24 6 6V7H3C2.45 7 2 7.45 2 8S2.45 9 3 9H4V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V9H21C21.55 9 22 8.55 22 8S21.55 7 21 7H19ZM8 6C8 4.34 9.34 3 11 3S14 4.34 14 6V7H8V6ZM18 19H6V9H18V19Z"/>
@@ -452,7 +453,7 @@
                 <div class="wishlist-actions">
                     <button class="btn btn-primary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H6L2 22V6C2 4.9 2.9 4 4 4ZM4 6V17.17L5.17 16H20V6H4Z"/>
                         </svg>
                         Contact Seller
                     </button>
@@ -489,7 +490,7 @@
                 <div class="wishlist-actions">
                     <button class="btn btn-primary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H6L2 22V6C2 4.9 2.9 4 4 4ZM4 6V17.17L5.17 16H20V6H4Z"/>
                         </svg>
                         Contact Seller
                     </button>
@@ -526,7 +527,7 @@
                 <div class="wishlist-actions">
                     <button class="btn btn-primary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H6L2 22V6C2 4.9 2.9 4 4 4ZM4 6V17.17L5.17 16H20V6H4Z"/>
                         </svg>
                         Contact Seller
                     </button>
@@ -562,8 +563,9 @@ document.addEventListener('DOMContentLoaded', function() {
             card.style.animation = 'fadeOut 0.3s ease forwards';
             setTimeout(() => {
                 card.remove();
-                // Update stats here
+                showNotification('Item removed from wishlist');
             }, 300);
+
         });
     });
 });
@@ -579,5 +581,47 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+
+
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'wishlist-notification';
+    notification.textContent = message;
+
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%) translateY(-20px)';
+    notification.style.backgroundColor = '#333';
+    notification.style.color = 'white';
+    notification.style.padding = '12px 24px';
+    notification.style.borderRadius = '6px';
+    notification.style.zIndex = '1000';
+    notification.style.opacity = '0';
+    notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    notification.style.fontSize = '14px';
+    notification.style.fontWeight = '500';
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(-50%) translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(-50%) translateY(-20px)';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
 </script>
 {% endblock %}
