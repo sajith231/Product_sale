@@ -83,3 +83,7 @@ def index(request):
 
 def wishlist(request):
     return render(request, 'wishlist.html')
+
+
+def wishlist_detail(request):
+    return render(request, 'wishlist_detail.html')

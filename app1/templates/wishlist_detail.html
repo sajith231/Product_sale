@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+<style>
+    /* Product Detail Page Styles */
+    .product-detail-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .product-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .product-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 5px;
+    }
+
+    .product-subtitle {
+        font-size: 1.2rem;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    .product-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+        .product-main {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Image Gallery */
+    .product-gallery {
+        position: relative;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .thumbnail-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .thumbnail:hover {
+        transform: scale(1.05);
+        border-color: #0ea5e9;
+    }
+
+    .thumbnail.active {
+        border-color: #0ea5e9;
+    }
+
+    /* Product Info */
+    .product-info {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .product-price {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #059669;
+        margin-bottom: 20px;
+    }
+
+    .product-meta {
+        margin-bottom: 25px;
+    }
+
+    .meta-item {
+        display: flex;
+        margin-bottom: 12px;
+    }
+
+    .meta-label {
+        font-weight: 600;
+        color: #1a202c;
+        min-width: 150px;
+    }
+
+    .meta-value {
+        color: #64748b;
+    }
+
+    .product-description {
+        margin: 30px 0;
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #0ea5e9;
+        border: 1px solid #0ea5e9;
+    }
+
+    .btn-secondary:hover {
+        background: #f0f9ff;
+        transform: translateY(-2px);
+    }
+
+    .wishlist-btn {
+        background: white;
+        color: #ef4444;
+        border: 1px solid #ef4444;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .wishlist-btn:hover {
+        background: #fef2f2;
+        transform: translateY(-2px);
+    }
+
+    .wishlist-btn.active {
+        background: #ef4444;
+        color: white;
+    }
+
+    /* Seller Info */
+    .seller-info {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        margin-top: 40px;
+    }
+
+    .seller-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 10px;
+    }
+
+    .seller-details {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .seller-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #0ea5e9;
+    }
+
+    .seller-meta {
+        flex: 1;
+    }
+
+    .seller-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 5px;
+    }
+
+    .seller-member-since {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .seller-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .product-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .product-title {
+            font-size: 1.8rem;
+        }
+        
+        .product-subtitle {
+            font-size: 1rem;
+        }
+        
+        .main-image {
+            height: 300px;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn, .wishlist-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-title {
+            font-size: 1.5rem;
+        }
+        
+        .product-price {
+            font-size: 1.8rem;
+        }
+        
+        .main-image {
+            height: 250px;
+        }
+        
+        .thumbnail-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .meta-item {
+            flex-direction: column;
+        }
+        
+        .meta-label {
+            margin-bottom: 5px;
+        }
+        
+        .seller-details {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="product-detail-container">
+    <!-- Product Header -->
+    <div class="product-header">
+        <div>
+            <h1 class="product-title">Hyundai i20</h1>
+            <p class="product-subtitle">Sportz 1.2 Petrol, 2019 Model</p>
+        </div>
+    </div>
+
+    <!-- Main Product Content -->
+    <div class="product-main">
+        <!-- Image Gallery -->
+        <div class="product-gallery">
+            <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20" class="main-image" id="mainImage">
+            <div class="thumbnail-container">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.o-QaHOIqb9DfiNgi5W3ntwHaE8&pid=Api" alt="Hyundai i20 Front" class="thumbnail active" onclick="changeMainImage(this)">
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            <div class="product-price">₹3,15,000</div>
+            
+            <div class="product-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Location:</span>
+                    <span class="meta-value">Kothrud, Pune</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Manufactured Year:</span>
+                    <span class="meta-value">2019</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Fuel Type:</span>
+                    <span class="meta-value">Petrol</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Transmission:</span>
+                    <span class="meta-value">Manual</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Mileage:</span>
+                    <span class="meta-value">18.6 kmpl</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Kilometers Driven:</span>
+                    <span class="meta-value">32,500 km</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">No. of Owners:</span>
+                    <span class="meta-value">1</span>
+                </div>
+            </div>
+
+            <div class="product-description">
+                <h3>Description</h3>
+                <p>Well maintained Hyundai i20 Sportz 1.2 Petrol with all original documents. Single owner car with no accident history. Regular service done at authorized Hyundai service center. Comes with remaining warranty. All accessories in perfect working condition including AC, music system, power windows, central locking, and alloy wheels.</p>
+                <p>Additional features include ABS, dual airbags, rear parking sensors, and keyless entry. Tyres and battery replaced 6 months back. Excellent condition inside out. Reason for selling: Upgrading to a bigger car.</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary">
+                    <i class="fas fa-phone-alt"></i>
+                    Contact Seller
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-map-marker-alt"></i>
+                    View Location
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seller Information -->
+    <div class="seller-info">
+        <h3 class="seller-title">Seller Information</h3>
+        <div class="seller-details">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Seller" class="seller-avatar">
+            <div class="seller-meta">
+                <div class="seller-name">Rahul Sharma</div>
+                <div class="seller-member-since">Member since March 2018</div>
+                <!-- <div class="seller-rating">
+                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                    <i class="fas fa-star-half-alt" style="color: #f59e0b;"></i>
+                    <span>(24 reviews)</span>
+                </div> -->
+            </div>
+        </div>
+        <div class="seller-actions">
+            <button class="btn btn-primary">
+                <i class="fas fa-comment-alt"></i>
+                Send Message
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Change main image when thumbnail is clicked
+    function changeMainImage(thumbnail) {
+        const mainImage = document.getElementById('mainImage');
+        mainImage.src = thumbnail.src;
+        
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail').forEach(img => {
+            img.classList.remove('active');
+        });
+        thumbnail.classList.add('active');
+    }
+
+   
+</script>
+{% endblock %}
