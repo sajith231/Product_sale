@@ -85,5 +85,18 @@ def wishlist(request):
     return render(request, 'wishlist.html')
 
 
+from django.shortcuts import render
+
 def wishlist_detail(request):
-    return render(request, 'wishlist_detail.html')
+    firebase_config = {
+        "apiKey": "AIzaSyB0dYlZgXcgzrzN4Pc6mvhmOyowj-QEFYk",
+        "authDomain": "e-commerce-66530.firebaseapp.com",
+        "projectId": "e-commerce-66530",
+        "storageBucket": "e-commerce-66530.firebasestorage.app",
+        "messagingSenderId": "295199322408",
+        "appId": "1:295199322408:web:f82d9ffa8656ab07d9a01d",
+        "measurementId": "G-HJ6T6PVD4F"
+    }
+    return render(request, 'wishlist_detail.html', {
+        'firebase_config': firebase_config
+    })

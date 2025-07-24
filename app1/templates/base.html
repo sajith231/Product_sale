@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
     <style>
         /* General styles */
@@ -1481,5 +1483,90 @@
             });
         });
     </script>
+
+
+<script>
+  // ✅ Your Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0dYlZgXcgzrzN4Pc6mvhmOyowj-QEFYk",
+    authDomain: "e-commerce-66530.firebaseapp.com",
+    projectId: "e-commerce-66530",
+    storageBucket: "e-commerce-66530.firebasestorage.app",
+    messagingSenderId: "295199322408",
+    appId: "1:295199322408:web:f82d9ffa8656ab07d9a01d",
+    measurementId: "G-HJ6T6PVD4F"
+  };
+
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ✅ Manually set test users (replace later with logged-in user)
+  const sender = "User1";    // You can replace with Django user variable
+  const receiver = "User2";  // The other user
+
+  // ✅ Send chat message
+  function sendMessage() {
+    const input = document.getElementById("chatInputField");
+    const message = input.value.trim();
+    if (message === "") return;
+
+    db.collection("messages").add({
+      from: sender,
+      to: receiver,
+      message: message,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    input.value = "";
+  }
+
+  // ✅ Realtime message fetching
+  db.collection("messages")
+    .orderBy("timestamp")
+    .onSnapshot(snapshot => {
+      const chatMessages = document.getElementById("chatMessages");
+      chatMessages.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (
+          (data.from === sender && data.to === receiver) ||
+          (data.from === receiver && data.to === sender)
+        ) {
+          const msgDiv = document.createElement("div");
+          msgDiv.classList.add("message");
+          msgDiv.classList.add(data.from === sender ? "sent" : "received");
+          msgDiv.innerText = data.message;
+          chatMessages.appendChild(msgDiv);
+        }
+      });
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+
+  // ✅ Chat open/close and enter key send
+  function openChat() {
+    document.getElementById("chatPanel").classList.add("open");
+  }
+
+  function closeChat() {
+    document.getElementById("chatPanel").classList.remove("open");
+  }
+
+  function handleKey(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  }
+
+  // ✅ Attach openChat to Send Message button
+  document.addEventListener("DOMContentLoaded", () => {
+    const chatButton = document.querySelector(".seller-actions .btn-primary");
+    if (chatButton) {
+      chatButton.addEventListener("click", openChat);
+    }
+  });
+</script>
 </body>
 </html>
