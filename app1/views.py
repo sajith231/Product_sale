@@ -84,6 +84,9 @@ def index(request):
 def wishlist(request):
     return render(request, 'wishlist.html')
 
+def my_chats(request):
+    return render(request,'my_chats.html')
+
 
 from django.shortcuts import render
 

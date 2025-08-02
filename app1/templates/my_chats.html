@@ -1,0 +1,1361 @@
+{% extends 'base.html' %}
+
+{% block title %}My Chats{% endblock %}
+
+{% block content %}
+<style>
+    /* Reset and Base Styles */
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Full Screen Chat Container */
+    .chats-container {
+        width: 100vw;
+        min-height: 100vh;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    /* Header Section */
+    .chats-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 2rem 2rem 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .chats-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0 0 0.5rem 0;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .chats-subtitle {
+        font-size: 1.1rem;
+        color: #cbd5e1;
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    /* Search and Filter Section */
+    .chats-filters {
+        background: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 280px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 14px 20px 14px 50px;
+        border: 2px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #f8fafc;
+    }
+
+    .search-input:focus {
+        border-color: #3b82f6;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 14px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 1rem;
+        outline: none;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        min-width: 140px;
+    }
+
+    .filter-select:focus,
+    .filter-select:hover {
+        border-color: #3b82f6;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Chat List Container */
+    .chats-list-container {
+        flex: 1;
+        padding: 1.5rem 2rem 2rem;
+        overflow-y: auto;
+    }
+
+    .chats-list {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    /* Chat Items */
+    .chat-item {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        background: white;
+    }
+
+    .chat-item:hover {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .chat-item:last-child {
+        border-bottom: none;
+    }
+
+    .chat-item.unread {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-left: 5px solid #3b82f6;
+    }
+
+    .chat-item.unread:hover {
+        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+    }
+
+    .chat-avatar-container {
+        position: relative;
+        margin-right: 1rem;
+    }
+
+    .chat-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .chat-item:hover .chat-avatar {
+        border-color: #3b82f6;
+        transform: scale(1.05);
+    }
+
+    .online-indicator {
+        width: 16px;
+        height: 16px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 50%;
+        border: 3px solid white;
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        animation: pulse-online 2s infinite;
+    }
+
+    @keyframes pulse-online {
+        0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        50% { 
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+        }
+    }
+
+    .offline-indicator {
+        width: 16px;
+        height: 16px;
+        background: #6b7280;
+        border-radius: 50%;
+        border: 3px solid white;
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+    }
+
+    .chat-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .chat-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .chat-time {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+        white-space: nowrap;
+        margin-left: 1rem;
+    }
+
+    .chat-preview {
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .chat-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .chat-product {
+        font-size: 0.85rem;
+        color: #059669;
+        font-weight: 600;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        border: 1px solid #6ee7b7;
+    }
+
+    .chat-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .unread-badge {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        min-width: 24px;
+        text-align: center;
+        animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-3px);
+        }
+        60% {
+            transform: translateY(-1px);
+        }
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: 1rem;
+        opacity: 0;
+        transform: translateX(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chat-item:hover .quick-actions {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .quick-action-btn {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e2e8f0;
+        background: white;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #475569;
+        white-space: nowrap;
+    }
+
+    .quick-action-btn:hover {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .quick-action-btn.danger:hover {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        color: #cbd5e1;
+        margin-bottom: 1.5rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .empty-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-description {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    .empty-action {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .empty-action:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Mobile Responsive Design */
+    @media (max-width: 1024px) {
+        .chats-header {
+            padding: 1.5rem;
+        }
+        
+        .chats-title {
+            font-size: 2.2rem;
+        }
+        
+        .chats-filters {
+            padding: 1rem 1.5rem;
+        }
+        
+        .chats-list-container {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .chats-header {
+            padding: 1.25rem 1rem;
+        }
+        
+        .chats-title {
+            font-size: 2rem;
+        }
+        
+        .chats-subtitle {
+            font-size: 1rem;
+        }
+        
+        .chats-filters {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .search-box {
+            min-width: auto;
+            width: 100%;
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+
+        .chats-list-container {
+            padding: 0.75rem 1rem 1rem;
+        }
+
+        .chat-item {
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chat-avatar {
+            width: 55px;
+            height: 55px;
+        }
+
+        .chat-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            width: 100%;
+        }
+
+        .chat-time {
+            margin-left: 0;
+        }
+
+        .chat-meta {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .quick-actions {
+            opacity: 1;
+            transform: translateX(0);
+            margin-left: 0;
+            margin-top: 0.75rem;
+            width: 100%;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+        }
+
+        .empty-description {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .chats-header {
+            padding: 1rem 0.75rem;
+        }
+        
+        .chats-title {
+            font-size: 1.75rem;
+        }
+        
+        .chats-filters {
+            padding: 0.75rem;
+        }
+
+        .chats-list-container {
+            padding: 0.5rem 0.75rem 0.75rem;
+        }
+
+        .chat-item {
+            padding: 0.75rem;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+        }
+
+        .chat-name {
+            font-size: 1.1rem;
+        }
+
+        .chat-preview {
+            font-size: 0.9rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+
+        .empty-state {
+            padding: 3rem 1rem;
+        }
+    }
+
+    /* Scrollbar Styling */
+    .chats-list-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .chats-list-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .chats-list-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+        border-radius: 4px;
+    }
+
+    .chats-list-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    }
+
+    /* Loading Animation */
+    .loading-skeleton {
+        animation: skeleton-loading 1.5s infinite ease-in-out;
+    }
+
+    @keyframes skeleton-loading {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>
+
+<div class="chats-container">
+    
+
+    <!-- Search and Filters -->
+    <div class="chats-filters">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search conversations, products, or messages..." id="searchInput">
+        </div>
+        <select class="filter-select" id="statusFilter">
+            <option value="all">All Chats</option>
+            <option value="unread">Unread Only</option>
+            <option value="active">Active Users</option>
+            <option value="archived">Archived</option>
+        </select>
+    </div>
+
+    <!-- Chat List Container -->
+    <div class="chats-list-container">
+        <div class="chats-list" id="chatsList">
+            <!-- Chat Item 1 - Unread -->
+            <div class="chat-item unread" onclick="openChatDetail('rahul-sharma')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="chat-avatar" alt="Rahul Sharma">
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Rahul Sharma</h3>
+                        <span class="chat-time">2 min ago</span>
+                    </div>
+                    <p class="chat-preview">Sure, I can arrange that. What time works best for you? The car is in excellent condition and ready for inspection.</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">🚗 Hyundai i20 - ₹3,15,000</span>
+                        <div class="chat-status">
+                            <span class="unread-badge">3</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">📖 Mark Read</button>
+                    <button class="quick-action-btn danger">🗑️ Delete</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 2 -->
+            <div class="chat-item unread" onclick="openChatDetail('priya-singh')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="chat-avatar" alt="Priya Singh">
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Priya Singh</h3>
+                        <span class="chat-time">1 hour ago</span>
+                    </div>
+                    <p class="chat-preview">Hi! I'm interested in the iPhone you posted. Is it still available? Can we meet today?</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">📱 iPhone 12 Pro - ₹55,000</span>
+                        <div class="chat-status">
+                            <span class="unread-badge">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">💬 Reply</button>
+                    <button class="quick-action-btn danger">🗑️ Delete</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 3 -->
+            <div class="chat-item" onclick="openChatDetail('amit-kumar')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/men/56.jpg" class="chat-avatar" alt="Amit Kumar">
+                    <div class="offline-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Amit Kumar</h3>
+                        <span class="chat-time">3 hours ago</span>
+                    </div>
+                    <p class="chat-preview">Thanks for the quick response! I'll transfer the amount by tomorrow. Great doing business with you.</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">💻 MacBook Air M1 - ₹75,000</span>
+                        <div class="chat-status"></div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">👁️ View</button>
+                    <button class="quick-action-btn">📦 Archive</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 4 - Unread -->
+            <div class="chat-item unread" onclick="openChatDetail('sneha-patel')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="chat-avatar" alt="Sneha Patel">
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Sneha Patel</h3>
+                        <span class="chat-time">5 hours ago</span>
+                    </div>
+                    <p class="chat-preview">Can you please share more photos of the furniture? Especially the corners and back side. Looks great!</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">🪑 Wooden Dining Set - ₹25,000</span>
+                        <div class="chat-status">
+                            <span class="unread-badge">2</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">💬 Reply</button>
+                    <button class="quick-action-btn danger">🗑️ Delete</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 5 -->
+            <div class="chat-item" onclick="openChatDetail('vikram-shah')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/men/78.jpg" class="chat-avatar" alt="Vikram Shah">
+                    <div class="offline-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Vikram Shah</h3>
+                        <span class="chat-time">Yesterday</span>
+                    </div>
+                    <p class="chat-preview">Great! I'll come to see the bike this weekend. Please keep it ready for inspection.</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">🏍️ Royal Enfield Classic - ₹1,20,000</span>
+                        <div class="chat-status"></div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">👁️ View</button>
+                    <button class="quick-action-btn">📦 Archive</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 6 -->
+            <div class="chat-item" onclick="openChatDetail('meera-joshi')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/women/25.jpg" class="chat-avatar" alt="Meera Joshi">
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Meera Joshi</h3>
+                        <span class="chat-time">2 days ago</span>
+                    </div>
+                    <p class="chat-preview">The washing machine is working perfectly! Thank you for the honest deal. Highly recommend!</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">🧺 LG Washing Machine - ₹18,000</span>
+                        <div class="chat-status"></div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">👁️ View</button>
+                    <button class="quick-action-btn">📦 Archive</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 7 -->
+            <div class="chat-item" onclick="openChatDetail('rajesh-gupta')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" class="chat-avatar" alt="Rajesh Gupta">
+                    <div class="offline-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Rajesh Gupta</h3>
+                        <span class="chat-time">3 days ago</span>
+                    </div>
+                    <p class="chat-preview">Hi, I saw your sofa set listing. Is pickup available from your location? Looks comfortable.</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">🛋️ L-Shaped Sofa Set - ₹35,000</span>
+                        <div class="chat-status"></div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">💬 Reply</button>
+                    <button class="quick-action-btn danger">🗑️ Delete</button>
+                </div>
+            </div>
+
+            <!-- Chat Item 8 - Unread -->
+            <div class="chat-item unread" onclick="openChatDetail('kavya-reddy')">
+                <div class="chat-avatar-container">
+                    <img src="https://randomuser.me/api/portraits/women/37.jpg" class="chat-avatar" alt="Kavya Reddy">
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-header">
+                        <h3 class="chat-name">Kavya Reddy</h3>
+                        <span class="chat-time">1 week ago</span>
+                    </div>
+                    <p class="chat-preview">Interested in your camera. Can we meet this evening to check the condition? I'm a professional photographer.</p>
+                    <div class="chat-meta">
+                        <span class="chat-product">📷 Canon EOS 1500D - ₹28,000</span>
+                        <div class="chat-status">
+                            <span class="unread-badge">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn">💬 Reply</button>
+                    <button class="quick-action-btn danger">🗑️ Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Enhanced Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        const chatItems = document.querySelectorAll('.chat-item');
+        let visibleCount = 0;
+        
+        chatItems.forEach(item => {
+            const name = item.querySelector('.chat-name').textContent.toLowerCase();
+            const preview = item.querySelector('.chat-preview').textContent.toLowerCase();
+            const product = item.querySelector('.chat-product').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || preview.includes(searchTerm) || product.includes(searchTerm)) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show empty state if no results
+        showEmptyState(visibleCount === 0 && searchTerm !== '', 'search');
+    });
+
+    // Enhanced Filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        filterChats();
+    });
+
+
+    function filterChats() {
+        const statusFilter = document.getElementById('statusFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
+        const chatItems = document.querySelectorAll('.chat-item');
+        let visibleCount = 0;
+        
+        chatItems.forEach(item => {
+            let showItem = true;
+            
+            // Status filter
+            if (statusFilter === 'unread' && !item.classList.contains('unread')) {
+                showItem = false;
+            } else if (statusFilter === 'active' && !item.querySelector('.online-indicator')) {
+                showItem = false;
+            } else if (statusFilter === 'archived') {
+                // Add archived logic here
+                showItem = false;
+            }
+            
+            // Type filter logic can be added here based on your data structure
+            if (typeFilter !== 'all') {
+                // Add logic for buyer/seller filtering
+            }
+            
+            if (showItem) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show empty state if no results
+        showEmptyState(visibleCount === 0, 'filter');
+    }
+
+    // Empty state management
+    function showEmptyState(show, type = 'default') {
+        const chatsList = document.getElementById('chatsList');
+        let existingEmptyState = chatsList.querySelector('.empty-state');
+        
+        if (show && !existingEmptyState) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            
+            let emptyContent = '';
+            if (type === 'search') {
+                emptyContent = `
+                    <div class="empty-icon">🔍</div>
+                    <h3 class="empty-title">No matching conversations</h3>
+                    <p class="empty-description">Try adjusting your search terms or check different filters.</p>
+                `;
+            } else if (type === 'filter') {
+                emptyContent = `
+                    <div class="empty-icon">📋</div>
+                    <h3 class="empty-title">No chats match your filters</h3>
+                    <p class="empty-description">Try changing your filter settings to see more conversations.</p>
+                `;
+            } else {
+                emptyContent = `
+                    <div class="empty-icon">💬</div>
+                    <h3 class="empty-title">No conversations yet</h3>
+                    <p class="empty-description">Start connecting with buyers and sellers to see your chats here.</p>
+                    <a href="/products/" class="empty-action">Browse Products</a>
+                `;
+            }
+            
+            emptyState.innerHTML = emptyContent;
+            chatsList.appendChild(emptyState);
+        } else if (!show && existingEmptyState) {
+            existingEmptyState.remove();
+        }
+    }
+
+    // Open chat detail function
+    function openChatDetail(chatId) {
+        // Add loading state
+        const clickedItem = event.currentTarget;
+        clickedItem.style.opacity = '0.7';
+        
+        // Simulate loading
+        setTimeout(() => {
+            // Redirect to chat detail page
+            window.location.href = `/chat/${chatId}/`;
+        }, 300);
+    }
+
+    // Enhanced Quick action handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('quick-action-btn')) {
+            e.stopPropagation();
+            
+            const action = e.target.textContent.toLowerCase().trim();
+            const chatItem = e.target.closest('.chat-item');
+            const chatName = chatItem.querySelector('.chat-name').textContent;
+            
+            // Add loading state
+            e.target.style.opacity = '0.5';
+            e.target.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                switch(true) {
+                    case action.includes('mark read'):
+                        chatItem.classList.remove('unread');
+                        const unreadBadge = chatItem.querySelector('.unread-badge');
+                        if (unreadBadge) {
+                            unreadBadge.style.animation = 'fadeOut 0.3s ease';
+                            setTimeout(() => unreadBadge.remove(), 300);
+                        }
+                        showNotification(`Marked conversation with ${chatName} as read`, 'success');
+                        break;
+                        
+                    case action.includes('delete'):
+                        if (confirm(`Are you sure you want to delete the conversation with ${chatName}? This action cannot be undone.`)) {
+                            chatItem.style.animation = 'slideOut 0.5s ease forwards';
+                            setTimeout(() => {
+                                chatItem.remove();
+                                showNotification(`Conversation with ${chatName} deleted`, 'info');
+                            }, 500);
+                        }
+                        break;
+                        
+                    case action.includes('archive'):
+                        if (confirm(`Archive conversation with ${chatName}?`)) {
+                            chatItem.style.animation = 'fadeOut 0.5s ease forwards';
+                            setTimeout(() => {
+                                chatItem.remove();
+                                showNotification(`Conversation with ${chatName} archived`, 'info');
+                            }, 500);
+                        }
+                        break;
+                        
+                    case action.includes('reply'):
+                    case action.includes('view'):
+                        const chatId = chatItem.getAttribute('onclick').match(/openChatDetail\('(.+?)'\)/)[1];
+                        openChatDetail(chatId);
+                        break;
+                }
+                
+                // Reset button state
+                e.target.style.opacity = '1';
+                e.target.style.pointerEvents = 'auto';
+            }, 300);
+        }
+    });
+
+    // Auto mark as read when hovering for 3 seconds
+    let hoverTimeout;
+    document.querySelectorAll('.chat-item.unread').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            hoverTimeout = setTimeout(() => {
+                this.classList.remove('unread');
+                const badge = this.querySelector('.unread-badge');
+                if (badge) {
+                    badge.style.animation = 'fadeOut 0.5s ease forwards';
+                    setTimeout(() => badge.remove(), 500);
+                }
+                
+                const chatName = this.querySelector('.chat-name').textContent;
+                showNotification(`Auto-marked conversation with ${chatName} as read`, 'success');
+            }, 3000);
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            clearTimeout(hoverTimeout);
+        });
+    });
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => notif.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span class="notification-message">${message}</span>
+            </div>
+        `;
+        
+        // Add notification styles
+        const notificationStyles = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 12px;
+                padding: 1rem 1.5rem;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease forwards;
+                border-left: 4px solid #3b82f6;
+                max-width: 400px;
+            }
+            
+            .notification-success {
+                border-left-color: #10b981;
+            }
+            
+            .notification-error {
+                border-left-color: #ef4444;
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            
+            .notification-icon {
+                font-size: 1.2rem;
+            }
+            
+            .notification-message {
+                font-weight: 500;
+                color: #1e293b;
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0);
+                }
+            }
+        `;
+        
+        // Add styles if not already added
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = notificationStyles;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + F to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            document.getElementById('searchInput').focus();
+        }
+        
+        // Escape to clear search
+        if (e.key === 'Escape') {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput === document.activeElement) {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input'));
+                searchInput.blur();
+            }
+        }
+    });
+
+    // Real-time updates simulation
+    function simulateRealTimeUpdates() {
+        setInterval(() => {
+            // Randomly update online status
+            const indicators = document.querySelectorAll('.online-indicator, .offline-indicator');
+            indicators.forEach(indicator => {
+                if (Math.random() > 0.95) { // 5% chance of status change
+                    if (indicator.classList.contains('online-indicator')) {
+                        indicator.className = 'offline-indicator';
+                    } else {
+                        indicator.className = 'online-indicator';
+                    }
+                }
+            });
+        }, 30000); // Check every 30 seconds
+    }
+
+    // Initialize real-time updates
+    simulateRealTimeUpdates();
+
+    // Performance optimization: Intersection Observer for lazy loading
+    const observerOptions = {
+        root: null,
+        rootMargin: '50px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe all images for lazy loading
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        observer.observe(img);
+    });
+
+    // Initialize tooltips for quick actions
+    document.querySelectorAll('.quick-action-btn').forEach(btn => {
+        btn.setAttribute('title', btn.textContent.trim());
+    });
+
+    // Add smooth scrolling behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Service Worker for offline functionality (optional)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/js/sw.js')
+                .then(registration => {
+                    console.log('SW registered: ', registration);
+                })
+                .catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        });
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add loading animation to page
+        document.body.style.opacity = '0';
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.5s ease';
+            document.body.style.opacity = '1';
+        }, 100);
+
+        // Initialize empty state check
+        const chatItems = document.querySelectorAll('.chat-item');
+        if (chatItems.length === 0) {
+            showEmptyState(true);
+        }
+
+        // Add focus ring for accessibility
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-navigation');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-navigation');
+        });
+    });
+
+    // Add PWA install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Show install button or banner
+        const installBanner = document.createElement('div');
+        installBanner.className = 'install-banner';
+        installBanner.innerHTML = `
+            <div class="install-content">
+                <span>📱 Install Chat App for better experience</span>
+                <button class="install-btn" onclick="installApp()">Install</button>
+                <button class="dismiss-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        const installStyles = `
+            .install-banner {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                color: white;
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+                z-index: 1000;
+                animation: slideUp 0.5s ease forwards;
+            }
+            
+            .install-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+            
+            .install-btn {
+                background: white;
+                color: #3b82f6;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .install-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+            }
+            
+            .dismiss-btn {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+                transition: background 0.3s ease;
+            }
+            
+            .dismiss-btn:hover {
+                background: rgba(255,255,255,0.2);
+            }
+            
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .install-banner {
+                    left: 10px;
+                    right: 10px;
+                    bottom: 10px;
+                }
+                
+                .install-content {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 0.75rem;
+                }
+            }
+        `;
+        
+        if (!document.querySelector('#install-styles')) {
+            const style = document.createElement('style');
+            style.id = 'install-styles';
+            style.textContent = installStyles;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(installBanner);
+        
+        // Auto dismiss after 10 seconds
+        setTimeout(() => {
+            if (installBanner.parentElement) {
+                installBanner.remove();
+            }
+        }, 10000);
+    });
+
+    function installApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    showNotification('App installed successfully!', 'success');
+                }
+                deferredPrompt = null;
+            });
+        }
+        
+        // Remove install banner
+        const installBanner = document.querySelector('.install-banner');
+        if (installBanner) {
+            installBanner.remove();
+        }
+    }
+</script>
+
+{% endblock %}
