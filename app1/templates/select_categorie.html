@@ -1,0 +1,493 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Category{% endblock %}
+
+{% block content %}
+<style>
+    /* Category Selection Styles */
+    .category-selection-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        min-height: 80vh;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .category-header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 20px 0;
+    }
+
+    .category-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #002f34 0%, #0ea5e9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .category-header p {
+        font-size: 1.2rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .category-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid #e2e8f0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px);
+        border-color: #0ea5e9;
+        box-shadow: 0 15px 35px rgba(14, 165, 233, 0.15);
+    }
+
+    .category-card.featured {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-color: #0ea5e9;
+    }
+
+    .category-card.featured::before {
+        transform: scaleX(1);
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .category-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover .category-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .category-icon i {
+        font-size: 35px;
+        color: white;
+    }
+
+    .category-card.featured .category-icon {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .category-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+
+    .category-description {
+        font-size: 0.95rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .category-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .popular-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .search-categories {
+        max-width: 500px;
+        margin: 0 auto 40px;
+        position: relative;
+    }
+
+    .search-categories input {
+        width: 100%;
+        padding: 15px 50px 15px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .search-categories input:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    }
+
+    .search-categories .search-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 18px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .category-selection-container {
+            padding: 30px 15px;
+        }
+
+        .category-header h1 {
+            font-size: 2rem;
+        }
+
+        .category-header p {
+            font-size: 1.1rem;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            padding: 25px 20px;
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .category-icon i {
+            font-size: 30px;
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+        }
+
+        .search-categories input {
+            padding: 12px 45px 12px 18px;
+            font-size: 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .category-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .category-card {
+            padding: 20px 15px;
+        }
+
+        .category-stats {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+        }
+    }
+
+    /* Animation for cards */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-card {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .category-card:nth-child(1) { animation-delay: 0.1s; }
+    .category-card:nth-child(2) { animation-delay: 0.2s; }
+    .category-card:nth-child(3) { animation-delay: 0.3s; }
+    .category-card:nth-child(4) { animation-delay: 0.4s; }
+    .category-card:nth-child(5) { animation-delay: 0.5s; }
+    .category-card:nth-child(6) { animation-delay: 0.6s; }
+    .category-card:nth-child(7) { animation-delay: 0.7s; }
+    .category-card:nth-child(8) { animation-delay: 0.8s; }
+</style>
+
+<div class="">
+    <!-- Header Section -->
+    <div class="category-header">
+        <h1>What are you selling?</h1>
+        <p>Choose the category that best describes your product to help buyers find it easily</p>
+    </div>
+
+    <!-- Search Categories -->
+    <div class="search-categories">
+        <input type="text" placeholder="Search categories..." id="categorySearch" style="margin-left: 3%;">
+        <i class="fas fa-search search-icon"></i>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="categories-grid" id="categoriesGrid">
+        <!-- Cars - Featured Category -->
+        <div class="category-card featured" data-category="cars" onclick="selectCategory('cars')">
+            <div class="popular-badge">Popular</div>
+            <div class="category-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="category-title">Cars</div>
+            <div class="category-description">Sell your car with detailed specifications and photos</div>
+            <div class="category-stats">
+                <span>50k+ listings</span>
+                <span>High demand</span>
+            </div>
+        </div>
+
+        <!-- Motorcycles -->
+        <div class="category-card" data-category="motorcycles" onclick="selectCategory('motorcycles')">
+            <div class="category-icon">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="category-title">Motorcycles</div>
+            <div class="category-description">Two-wheelers, scooters, and bikes of all types</div>
+            <div class="category-stats">
+                <span>25k+ listings</span>
+                <span>Growing market</span>
+            </div>
+        </div>
+
+        <!-- Mobile Phones -->
+        <div class="category-card" data-category="mobiles" onclick="selectCategory('mobiles')">
+            <div class="category-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <div class="category-title">Mobile Phones</div>
+            <div class="category-description">Smartphones, tablets, and mobile accessories</div>
+            <div class="category-stats">
+                <span>100k+ listings</span>
+                <span>Fast selling</span>
+            </div>
+        </div>
+
+        <!-- Electronics -->
+        <div class="category-card" data-category="electronics" onclick="selectCategory('electronics')">
+            <div class="category-icon">
+                <i class="fas fa-tv"></i>
+            </div>
+            <div class="category-title">Electronics</div>
+            <div class="category-description">TVs, computers, cameras, and gadgets</div>
+            <div class="category-stats">
+                <span>75k+ listings</span>
+                <span>Tech lovers</span>
+            </div>
+        </div>
+
+        <!-- Home & Furniture -->
+        <div class="category-card" data-category="furniture" onclick="selectCategory('furniture')">
+            <div class="category-icon">
+                <i class="fas fa-couch"></i>
+            </div>
+            <div class="category-title">Home & Furniture</div>
+            <div class="category-description">Furniture, home decor, and household items</div>
+            <div class="category-stats">
+                <span>40k+ listings</span>
+                <span>Home lovers</span>
+            </div>
+        </div>
+
+        <!-- Fashion -->
+        <div class="category-card" data-category="fashion" onclick="selectCategory('fashion')">
+            <div class="category-icon">
+                <i class="fas fa-tshirt"></i>
+            </div>
+            <div class="category-title">Fashion</div>
+            <div class="category-description">Clothing, shoes, accessories, and jewelry</div>
+            <div class="category-stats">
+                <span>60k+ listings</span>
+                <span>Style seekers</span>
+            </div>
+        </div>
+
+        <!-- Properties -->
+        <div class="category-card" data-category="properties" onclick="selectCategory('properties')">
+            <div class="category-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="category-title">Properties</div>
+            <div class="category-description">Houses, apartments, commercial spaces</div>
+            <div class="category-stats">
+                <span>30k+ listings</span>
+                <span>Big investments</span>
+            </div>
+        </div>
+
+        <!-- Jobs -->
+        <div class="category-card" data-category="jobs" onclick="selectCategory('jobs')">
+            <div class="category-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="category-title">Jobs</div>
+            <div class="category-description">Job postings and career opportunities</div>
+            <div class="category-stats">
+                <span>20k+ listings</span>
+                <span>Career growth</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Category selection functionality
+function selectCategory(category) {
+    // Add visual feedback
+    const selectedCard = document.querySelector(`[data-category="${category}"]`);
+    selectedCard.style.transform = 'scale(0.95)';
+    
+    setTimeout(() => {
+        selectedCard.style.transform = '';
+        
+        // Redirect based on category
+        if (category === 'cars') {
+            // Redirect to car listing form
+            window.location.href = '/add-product-details/';  // Updated URL
+        } else {
+            // For now, show alert for other categories
+            showNotification(`${category.charAt(0).toUpperCase() + category.slice(1)} category coming soon!`);
+        }
+    }, 150);
+}
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('categorySearch');
+    const categoryCards = document.querySelectorAll('.category-card');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        categoryCards.forEach(card => {
+            const title = card.querySelector('.category-title').textContent.toLowerCase();
+            const description = card.querySelector('.category-description').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                card.style.display = 'block';
+                card.style.animation = 'fadeInUp 0.3s ease forwards';
+            } else {
+                card.style.display = searchTerm === '' ? 'block' : 'none';
+            }
+        });
+    });
+});
+
+// Notification function
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        z-index: 1000;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        animation: slideDown 0.3s ease forwards;
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideDown 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add hover effects
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryCards = document.querySelectorAll('.category-card');
+    
+    categoryCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+</script>
+
+{% endblock %}

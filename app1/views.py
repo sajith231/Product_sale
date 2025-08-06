@@ -103,3 +103,15 @@ def wishlist_detail(request):
     return render(request, 'wishlist_detail.html', {
         'firebase_config': firebase_config
     })
+
+
+
+
+
+from django.shortcuts import render
+
+def add_product_page(request):
+    return render(request, 'add_product_details.html')
+
+def select_category_page(request):
+    return render(request, 'select_categorie.html')
